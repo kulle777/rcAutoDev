@@ -1,8 +1,7 @@
 #include <Arduino.h>
-#include <SPI.h>
 #include <PID_v1.h>
 #include "RF24.h"
-
+#include <RF24Network.h>
 /*
 //    PID saadin demokoodia
 //Define Variables we'll be connecting to
@@ -19,8 +18,11 @@ uint8_t address[6] = {"1Node"};   //kayttaa charactereja integereina. Toimii kos
 //    address ja pipe. Kun ne on oikein, niin kommunikaatio pelaa
 
 struct payloadType {
+  uint16_t nopeusPWM = 0;
+  uint16_t suunta = 0;
+  bool horn = 0;
   bool eteen = 1;
-  uint16_t nopeus = 0;
+  bool lights = 1;
 };
 
 payloadType payload;
@@ -37,8 +39,10 @@ void setup() {
   }
   radio.setPALevel(RF24_PA_LOW);
   radio.setPayloadSize(sizeof(payloadType));
-  radio.openReadingPipe(1,address);
+  radio.openReadingPipe(0,address);
   radio.startListening();
+  radio.setDataRate(RF24_250KBPS);
+
 }
 
 void loop() {
@@ -52,7 +56,7 @@ void loop() {
       Serial.print(pipe);                     // print the pipe number
       Serial.print(F(": "));
       Serial.println(payload.eteen);                // print the payload's value
-      Serial.println(payload.nopeus);
+      Serial.println(payload.nopeusPWM);
     }
 
     //saatu viesti on nyt payload muuttujassa tallessa
