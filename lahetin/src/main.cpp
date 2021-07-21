@@ -31,7 +31,6 @@ void setup() {
 
   if (!radio.begin()) {                                         // initialize the transceiver on the SPI bus
     Serial.println(F("radio hardware is not responding!!"));
-    while (1) {}
   }
   radio.setPALevel(RF24_PA_LOW);                                // RF24_PA_MAX is default.
   radio.setPayloadSize(sizeof(payloadType));
@@ -41,6 +40,8 @@ void setup() {
 }
 
 void loop() {
+  delay(1);
+  payload.nopeusPWM += 1;
   network.update();
   //TODO: take inputs and construct a payload for transmission
 
