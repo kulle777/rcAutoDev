@@ -40,7 +40,6 @@ void setup() {
 }
 
 void loop() {
-  delay(1);
   payload.nopeusPWM += 1;
   network.update();
   //TODO: take inputs and construct a payload for transmission
@@ -53,9 +52,8 @@ void loop() {
 
 
   //transmit at regular intervals (timeInterval in milliseconds)
-  timer = millis();
-  if(timer - last_sent > timeInterval){
-    last_sent = timer;
+  if(millis() - last_sent >= timeInterval){
+    last_sent = millis();
 
     RF24NetworkHeader header(/*to node*/ other_node);     //vastaanottaja kohde valitaan sen addressilla
     bool ok = network.write(header,&payload,sizeof(payloadType));

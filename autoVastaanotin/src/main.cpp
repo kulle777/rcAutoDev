@@ -57,7 +57,6 @@ struct payloadType {
 
 payloadType payload;
 
-unsigned long timer;
 unsigned long lastReceived;
 const unsigned long maxTimeBeforeTimeOut = 3000;
 
@@ -78,6 +77,7 @@ void setup() {
   }
   radio.setPALevel(RF24_PA_LOW);
   radio.setDataRate(RF24_250KBPS);
+  radio.setPayloadSize(sizeof(payloadType));
   network.begin(/*channel*/ 90,/*node address*/ this_node);
   //myServo.attach(9);
 }
@@ -93,10 +93,11 @@ void loop() {
       lastReceived = millis();
 
       //TODO: testaa toimiiko jos vaan sanon, etta payloadSize = sizeof(payloadType)
-      uint16_t payloadSize = network.peek(header);    // Use peek() to get the size of the payload
-      network.read(header, &payload, payloadSize);    // Get the data
-      Serial.print("Received packet, size ");         // Print info about received data
-      Serial.print(payloadSize);
+      //uint16_t payloadSize = network.peek(header);    // Use peek() to get the size of the payload
+      network.read(header, &payload, sizeof(payloadType));    // Read data to global payload variable
+
+      Serial.print("Received packet, id: ");         // Print info about received data
+      Serial.print(header.id);
       Serial.print("(");
       Serial.print(millis() - timeBetweenPackets);
       Serial.println("ms since last)");
